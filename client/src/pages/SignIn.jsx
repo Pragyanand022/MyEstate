@@ -18,10 +18,10 @@ export default function SignIn() {
     e.preventDefault();
 
     try {
-      dispatch(signInStart)
+      dispatch(signInStart()) 
       const res = await fetch('/api/auth/signin',{
         method:'POST',
-        headers: {
+        headers: { 
           'Content-Type':'application/json',
         },
         body: JSON.stringify(formData),
