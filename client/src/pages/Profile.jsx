@@ -8,6 +8,8 @@ import {
 } from "firebase/storage";
 import { app } from "../firebase.js";
 import {updateUserFailure,updateUserSuccess,updateUserStart,deleteUserFailure,deleteUserStart,deleteUserSuccess, signOutUserFailure,signOutUserStart,signOutUserSuccess} from '../redux/user/userSlice.js';
+import {Link} from 'react-router-dom';
+import { createListing } from "../../../api/controllers/listing.controller.js";
 
 export default function () {
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -130,11 +132,13 @@ export default function () {
             <span className="text-red-600">Error uploading file!</span>
           ) : filePerc > 0 && filePerc < 100 ? (
             <span className="text-slate-600">Uploading {filePerc}%</span>
-          ) : (
+          ) : filePerc===100
+            ?(
             <span className="text-green-600">
               Profile image successfully uploaded!
             </span>
-          )}
+            ):
+            (" ")}
         </p>
         <input
           type="text"
@@ -162,6 +166,9 @@ export default function () {
         <button disabled={loading} className="uppercase bg-slate-700 p-3 rounded-lg text-white hover:opacity-95 disabled:opacity-85">
          {loading?'Updating...':'Update'}
         </button>
+        <Link to={'/create-listing'} className="uppercase bg-green-700 p-3 rounded-lg text-white text-center hover:opacity-95 disabled:opacity-85">
+         Create Listing
+        </Link>
       </form>
       <div className="flex justify-between mt-5">
         <span onClick={handleDeleteUser} className="text-red-700 cursor-pointer">Delete account</span>
