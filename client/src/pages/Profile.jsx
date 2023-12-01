@@ -31,6 +31,7 @@ export default function () {
   const [updateSuccess, setupdateSuccess] = useState(false);
   const [showListingsError, setshowListingsError] = useState(false);
   const [userListings, setUserListings] = useState([]);
+  const [listingDeleteError, setListingDeleteError] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -132,6 +133,25 @@ export default function () {
       setshowListingsError(true);
     }
   };
+
+  const handleListingDelete = async(listingId)=>{
+    try {
+      setListingDeleteError(false);
+      const res = await fetch(`/api/listing/delete/${listingId}`,{
+        method:'DELETE',
+      });
+      const data = await res.json();
+      if(data.success === false){
+        setListingDeleteError(data.message);
+        return;
+      }
+      setUserListings((prev)=>{
+        prev.filter((listing)=>listing._id!==listingId);
+      })
+    } catch (error) {
+      setListingDeleteError(error.message);
+    }
+  }
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -237,10 +257,10 @@ export default function () {
                 />
               </Link>
               <Link to={`/listing/${listing._id}`} className="truncated hover:underline flex-1 mx-4">
-                  {listing.name}
+                 <p>{listing.name}</p> 
               </Link>
               <div className="flex flex-col items-center">
-                <button className="uppercase text-red-700 hover:opacity-80" >Delete</button>
+                <button onClick={()=>handleListingDelete(listing._id)} className="uppercase text-red-700 hover:opacity-80" >Delete</button>
                 <button className="uppercase text-green-700 hover:opacity-80" >Edit</button>
               </div>
             </div>
