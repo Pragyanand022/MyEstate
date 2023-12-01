@@ -7,8 +7,18 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase.js";
-import {updateUserFailure,updateUserSuccess,updateUserStart,deleteUserFailure,deleteUserStart,deleteUserSuccess, signOutUserFailure,signOutUserStart,signOutUserSuccess} from '../redux/user/userSlice.js';
-import {Link} from 'react-router-dom';
+import {
+  updateUserFailure,
+  updateUserSuccess,
+  updateUserStart,
+  deleteUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  signOutUserFailure,
+  signOutUserStart,
+  signOutUserSuccess,
+} from "../redux/user/userSlice.js";
+import { Link } from "react-router-dom";
 import { createListing } from "../../../api/controllers/listing.controller.js";
 
 export default function () {
@@ -18,7 +28,9 @@ export default function () {
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
-  const [updateSuccess, setupdateSuccess] = useState(false)
+  const [updateSuccess, setupdateSuccess] = useState(false);
+  const [showListingsError, setshowListingsError] = useState(false);
+  const [userListings, setUserListings] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -48,67 +60,78 @@ export default function () {
       }
     );
   };
-  const handleChange = (e)=>{
-    setFormData({...formData,[e.target.id]:e.target.value});
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
     console.log(formData);
-  }
-  const handleSubmit = async(e)=>{
+  };
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        dispatch(updateUserStart());
-        const res = await fetch(`/api/user/update/${currentUser._id}`,{
-          method:'POST',
-          headers:{
-            'Content-Type':'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
-        const data = await res.json();
-        if(data.success===false){
-          dispatch(updateUserFailure(data.message));
-          return;
-        }
-        dispatch(updateUserSuccess(data));
-        setupdateSuccess(true);
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+      setupdateSuccess(true);
     } catch (error) {
       dispatch(updateUserFailure(error.message));
     }
   };
 
-  const handleDeleteUser = async(e)=>{
-      try {
-        dispatch(deleteUserStart());
-        const res = await fetch(`/api/user/delete/${currentUser._id}`,{
-          method:'DELETE',
-        });
-        const data = await res.json();
-        if(data.success===false){
-          dispatch(deleteUserFailure(data.message));
-          return;
-        }
-        dispatch(deleteUserSuccess(data));
-
-      } catch (error) {
-        dispatch(deleteUserFailure(error.message));
+  const handleDeleteUser = async (e) => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+        return;
       }
-
-  }
-  const handleSignOut = async()=>{
-      try {
-        dispatch(signOutUserStart());
-        const res = await fetch('/api/auth/signout');
-        const data = await res.json();
-        if(data.success===false){
-          dispatch(signOutUserFailure(data.message));
-          return;
-        }
-        dispatch(signOutUserSuccess(data));
-
-      } catch (error) {
-        dispatch(signOutUserFailure(error.message));
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
+    }
+  };
+  const handleSignOut = async () => {
+    try {
+      dispatch(signOutUserStart());
+      const res = await fetch("/api/auth/signout");
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(signOutUserFailure(data.message));
+        return;
       }
+      dispatch(signOutUserSuccess(data));
+    } catch (error) {
+      dispatch(signOutUserFailure(error.message));
+    }
+  };
 
-  }
+  const handleShowListings = async (e) => {
+    try {
+      setshowListingsError(false);
+      const res = await fetch(`/api/user/listings/${currentUser._id}`);
+      const data = await res.json();
+      if (data.success === false) {
+        setshowListingsError(true);
+        return;
+      }
+      setUserListings(data);
+    } catch (error) {
+      setshowListingsError(true);
+    }
+  };
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -132,13 +155,13 @@ export default function () {
             <span className="text-red-600">Error uploading file!</span>
           ) : filePerc > 0 && filePerc < 100 ? (
             <span className="text-slate-600">Uploading {filePerc}%</span>
-          ) : filePerc===100
-            ?(
+          ) : filePerc === 100 ? (
             <span className="text-green-600">
               Profile image successfully uploaded!
             </span>
-            ):
-            (" ")}
+          ) : (
+            " "
+          )}
         </p>
         <input
           type="text"
@@ -163,23 +186,67 @@ export default function () {
           onChange={handleChange}
           id="password"
         />
-        <button disabled={loading} className="uppercase bg-slate-700 p-3 rounded-lg text-white hover:opacity-95 disabled:opacity-85">
-         {loading?'Updating...':'Update'}
+        <button
+          disabled={loading}
+          className="uppercase bg-slate-700 p-3 rounded-lg text-white hover:opacity-95 disabled:opacity-85"
+        >
+          {loading ? "Updating..." : "Update"}
         </button>
-        <Link to={'/create-listing'} className="uppercase bg-green-700 p-3 rounded-lg text-white text-center hover:opacity-95 disabled:opacity-85">
-         Create Listing
+        <Link
+          to={"/create-listing"}
+          className="uppercase bg-green-700 p-3 rounded-lg text-white text-center hover:opacity-95 disabled:opacity-85"
+        >
+          Create Listing
         </Link>
       </form>
       <div className="flex justify-between mt-5">
-        <span onClick={handleDeleteUser} className="text-red-700 cursor-pointer">Delete account</span>
-        <span onClick={handleSignOut} className="text-red-700 cursor-pointer">Sign out</span>
+        <span
+          onClick={handleDeleteUser}
+          className="text-red-700 cursor-pointer"
+        >
+          Delete account
+        </span>
+        <span onClick={handleSignOut} className="text-red-700 cursor-pointer">
+          Sign out
+        </span>
       </div>
-      <p className="text-red-700 mt5">
-        {error ? error : ' '}
-      </p>
+      <p className="text-red-700 mt5">{error ? error : " "}</p>
       <p className="text-green-700 mt5">
-        {updateSuccess ? 'User is updated successfully!' : ' '}
+        {updateSuccess ? "User is updated successfully!" : " "}
       </p>
+      <button
+        onClick={handleShowListings}
+        className="text-green-700 w-full hover:opacity-80"
+      >
+        Show Listings
+      </button>
+      <p className="text-red-700 text-sm mt-5">
+        {showListingsError ? "Error showing listings" : ""}{" "}
+      </p>
+      {userListings &&
+        userListings.length > 0 &&
+        <div className="flex flex-col items-center gap-4">
+            <h1 className="font-bold mt-4">Your Listings</h1>
+            {userListings.map((listing) => (
+            <div key={listing._id} className="flex border rounded p-3 items-center justify-between font-semibold w-full">
+              <Link to={`/listing/${listing._id}`}>
+                <img
+                  src={listing.imageUrls[0]}
+                  alt="listing cover"
+                  className="h-16 w-16 object-contain"
+                />
+              </Link>
+              <Link to={`/listing/${listing._id}`} className="truncated hover:underline flex-1 mx-4">
+                  {listing.name}
+              </Link>
+              <div className="flex flex-col items-center">
+                <button className="uppercase text-red-700 hover:opacity-80" >Delete</button>
+                <button className="uppercase text-green-700 hover:opacity-80" >Edit</button>
+              </div>
+            </div>
+            ))}
+          </div>
+        }
     </div>
   );
 }
