@@ -4,14 +4,25 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
 import "swiper/css/bundle";
-import { FaBath, FaBed, FaChair, FaMapMarkerAlt, FaParking } from "react-icons/fa";
+import {
+  FaBath,
+  FaBed,
+  FaChair,
+  FaMapMarkerAlt,
+  FaParking,
+} from "react-icons/fa";
+import { useSelector } from "react-redux";
+import Contact from "../components/Contact";
 
 export default function Listing() {
   SwiperCore.use([Navigation]);
+  const { currentUser } = useSelector((state) => state.user);
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [contact, setContact] = useState(false);
   const params = useParams();
+
   useEffect(() => {
     const fetchListing = async () => {
       try {
@@ -33,7 +44,7 @@ export default function Listing() {
     };
     fetchListing();
   }, [params.listingId]);
-  console.log(listing);
+
 
   return (
     <main>
@@ -76,44 +87,48 @@ export default function Listing() {
               </p>
               {listing.offer && (
                 <p className="bg-green-900 w-full max-w-[200px] text-white text-center rounded-lg p-1">
-                  $ {listing.regularPrice - listing.discountPrice}
+                  $ {listing.regularPrice - listing.discountPrice} Discount
                 </p>
               )}
             </div>
             <div className="flex mt-3">
-              <p className="text-slate-800 font-semibold text-sm">
-                <span className="object-cover font-bold text-black text-md">Details - </span>
+              <p className="text-slate-800 font-semibold text-md">
+                <span className="object-cover font-bold text-black text-md">
+                  Details -{" "}
+                </span>
                 {listing.description}
               </p>
             </div>
-            <div className="flex mt-3  text-green-800 font-semibold gap-5">
-              <div className="flex items-center gap-1">
+            <div className="flex mt-3  text-green-800 font-semibold gap-4 sm:gap-6 ">
+              <div className="flex items-center gap-1 whitespace-nowrap">
                 <FaBed />
                 <span>
                   {listing.bedrooms}
-                  {(listing.bedrooms>1)?" Beds":" Bed"}
+                  {listing.bedrooms > 1 ? " Beds" : " Bed"}
                 </span>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 whitespace-nowrap">
                 <FaBath />
                 <span>
                   {listing.bathrooms}
-                  {(listing.bathrooms>1)?" Baths":" Bath"}
+                  {listing.bathrooms > 1 ? " Baths" : " Bath"}
                 </span>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 whitespace-nowrap">
                 <FaParking />
-                <span>
-                  {(listing.parking)?" Parking":" No Parking"}
-                </span>
+                <span>{listing.parking ? " Parking" : " No Parking"}</span>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 whitespace-nowrap">
                 <FaChair />
-                <span>
-                  {(listing.furnished)?" Furnished":" Not Frunished"}
-                </span>
+                <span>{listing.furnished ? " Furnished" : " Unfurnished"}</span>
               </div>
             </div>
+            {currentUser && currentUser._id !== listing.userRef && !contact && (
+              <button onClick={()=>setContact(true)} className="bg-slate-700 text-white w-full rounded-lg mt-5 uppercase hover:opacity-90 p-3">
+                contact landlord
+              </button>
+            )}
+            {contact && <Contact listing={listing}/>}
           </div>
         </>
       )}
