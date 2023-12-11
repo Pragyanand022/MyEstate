@@ -40,8 +40,7 @@ export default function Contact({ listing }) {
           onChange={onChange}
         />
         <Link
-          to={`mailto:${landlord && landlord.email}?subject=Regarding 
-          ${listing.name} 
+          to={`mailto:${landlord && landlord.email}?subject=Regarding ${listing.name} 
           &body=${message}`}
           className="uppercase p-3 bg-slate-700 rounded-lg text-white text-center"
         >
