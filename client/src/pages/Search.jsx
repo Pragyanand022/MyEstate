@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import ListingItem from "../components/ListingItem";
 export default function Search() {
   const [sidebarData, setSidebarData] = useState({
     searchTerm: "",
@@ -38,9 +39,9 @@ export default function Search() {
         setSidebarData({
           searchTerm: searchTermFromURL || "",
           type: typeFromURL || "all",
-          parking: parkingFromURL|| false,
-          furnished: furnishedFromURL|| false,
-          offer: offerFromURL || false,
+          parking: parkingFromURL==='true'?true: false,
+          furnished: furnishedFromURL==='true'?true: false,
+          offer: offerFromURL ==='true'?true: false,
           sort: sortFromURL || "created_at",
           order: orderFromURL || "desc",
         });
@@ -57,7 +58,6 @@ export default function Search() {
       fetchListings();
     
   },[location.search]);
-
  
   const handleChange = (e) => {
     if (
@@ -78,7 +78,7 @@ export default function Search() {
       setSidebarData({
         ...sidebarData,
         [e.target.id]:
-          e.target.checked || e.target.checked === "true" ? true : false,
+          e.target.checked || e.target.checked === 'true' ? true : false,
       });
     }
     if (e.target.id === "sort_order") {
@@ -119,7 +119,7 @@ export default function Search() {
               onChange={handleChange}
             />
           </div>
-          <div className="flex gap-2 flex-wrap items-center">
+          <div className="flex gap-3 flex-wrap items-center">
             <label className="font-semibold">Type:</label>
             <div className="flex gap-2">
               <input
@@ -162,7 +162,7 @@ export default function Search() {
               <span>Offer</span>
             </div>
           </div>
-          <div className="flex gap-2 flex-wrap items-center">
+          <div className="flex gap-3 flex-wrap items-center">
             <label className="font-semibold">Amenities:</label>
             <div className="flex gap-2">
               <input
@@ -204,10 +204,24 @@ export default function Search() {
           </button>
         </form>
       </div>
-      <div className="flex p-5">
+      <div className="flex-1">
         <h1 className="text-3xl font-bold border-b p-3 text-slate-700">
           Listing Results:
         </h1>
+        <div className="m-5 flex flex-wrap">
+            {!loading && listings.length===0 &&(
+              <p className="text-slate-700 font-semibold">No result found!!</p>
+            )}
+            {loading && (
+              <p className="flex justify-center w-full text-slate-700 text-lg font-semibold">Loading...</p>
+            )}
+            {!loading && listings && listings.map((listing)=>(
+              <ListingItem key={listing._id} listing={listing} />
+            ))
+    
+            }
+
+        </div>
       </div>
     </div>
   );

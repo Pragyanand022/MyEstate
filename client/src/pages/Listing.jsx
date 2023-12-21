@@ -75,7 +75,7 @@ export default function Listing() {
           </div>
           <div className="p-4 w-full sm:max-w-[1000px] m-auto">
             <h1 className="font-bold text-2xl">
-              {listing.name} - ${listing.regularPrice}
+              {listing.name} - ${listing.regularPrice.toLocaleString('en-US')}
             </h1>
             <div className="flex items-center gap-3 text-sm font-semibold mt-4">
               <FaMapMarkerAlt className="text-green-700 " />
@@ -87,7 +87,7 @@ export default function Listing() {
               </p>
               {listing.offer && (
                 <p className="bg-green-900 w-full max-w-[200px] text-white text-center rounded-lg p-1">
-                  $ {listing.regularPrice - listing.discountPrice} Discount
+                  $ {listing.discountPrice.toLocaleString('en-US')} Discount
                 </p>
               )}
             </div>
