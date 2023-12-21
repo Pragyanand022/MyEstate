@@ -85,7 +85,6 @@ export default function CreateListing() {
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(`file is ${progress}% uploaded`);
         },
         (error) => {
           reject(error);

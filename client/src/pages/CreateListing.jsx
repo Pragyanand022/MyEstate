@@ -32,8 +32,7 @@ export default function CreateListing() {
   const [error, setError] = useState(false) ;
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  console.log(formData);
+  
   const handleImageSubmit = (e) => {
     if (files.length > 0 && files.length+formData.imageUrls.length   < 7) {
       const promises = [];
@@ -71,7 +70,6 @@ export default function CreateListing() {
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(`file is ${progress}% uploaded`);
         },
         (error) => {
           reject(error);
