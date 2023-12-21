@@ -4,7 +4,7 @@ import { list } from "firebase/storage";
 
 export default function ListingItem({ listing }) {
   return (
-    <div className="bg-white overflow-hidden rounded-lg shadow hover:shadow-lg transition-shadow duration-3000 w-full sm:w-[310px] m-3">
+    <div className="bg-white overflow-hidden rounded-lg shadow hover:shadow-lg transition-shadow duration-3000 w-full sm:w-[300px]">
       <Link to={`/listing/${listing._id}`}>
         <img
           src={listing.imageUrls[0]}
