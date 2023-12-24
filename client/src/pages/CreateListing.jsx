@@ -89,7 +89,7 @@ export default function CreateListing() {
   };
 
   const handleChange = (e)=>{
-    if(e.target.id==='sell' || e.target.id==='rent'){
+    if(e.target.id==='sale' || e.target.id==='rent'){
         setFormData({
           ...formData, type:e.target.id,
         })
@@ -177,9 +177,9 @@ export default function CreateListing() {
           />
           <div className="flex gap-5 mt-4 flex-wrap">
             <div className="flex gap-2">
-              <input type="checkbox" id="sell" className="w-5" onChange={handleChange} checked={formData.type==='sell'}
+              <input type="checkbox" id="sale" className="w-5" onChange={handleChange} checked={formData.type==='sale'}
             />
-              <span>Sell</span>
+              <span>sale</span>
             </div>
             <div className="flex gap-2">
               <input type="checkbox" id="rent" className="w-5" onChange={handleChange} checked={formData.type==='rent'}/>

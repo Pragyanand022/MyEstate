@@ -148,7 +148,7 @@ export default function Search() {
                 checked={sidebarData.type === "all"}
                 onChange={handleChange}
               />
-              <span>Rent & Sell</span>
+              <span>Rent & sale</span>
             </div>
             <div className="flex gap-2">
               <input
@@ -168,7 +168,7 @@ export default function Search() {
                 checked={sidebarData.type === "sale"}
                 onChange={handleChange}
               />
-              <span>Sell</span>
+              <span>sale</span>
             </div>
             <div className="flex gap-2">
               <input
