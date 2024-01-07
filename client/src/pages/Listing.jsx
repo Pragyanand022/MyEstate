@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
 import "swiper/css/bundle";
+import { Link } from "react-router-dom";
 import {
   FaBath,
   FaBed,
@@ -24,7 +25,7 @@ export default function Listing() {
   const params = useParams();
 
   useEffect(() => {
-    const fetchListing = async () => {
+    const fetchListing = async () => { 
       try {
         setLoading(true);
         const res = await fetch(`/api/listing/get/${params.listingId}`);
@@ -44,7 +45,6 @@ export default function Listing() {
     };
     fetchListing();
   }, [params.listingId]);
-
 
   return (
     <main>
@@ -75,7 +75,7 @@ export default function Listing() {
           </div>
           <div className="p-4 w-full sm:max-w-[1000px] m-auto">
             <h1 className="font-bold text-2xl">
-              {listing.name} - ${listing.regularPrice.toLocaleString('en-US')}
+              {listing.name} - ${listing.regularPrice.toLocaleString("en-US")}
             </h1>
             <div className="flex items-center gap-3 text-sm font-semibold mt-4">
               <FaMapMarkerAlt className="text-green-700 " />
@@ -87,7 +87,8 @@ export default function Listing() {
               </p>
               {listing.offer && (
                 <p className="bg-green-900 w-full max-w-[200px] text-white text-center rounded-lg p-1">
-                  $ {listing.discountPrice.toLocaleString('en-US')} <span className="text-slate-300">Offer</span>
+                  $ {listing.discountPrice.toLocaleString("en-US")}{" "}
+                  <span className="text-slate-300">Offer</span>
                 </p>
               )}
             </div>
@@ -124,11 +125,29 @@ export default function Listing() {
               </div>
             </div>
             {currentUser && currentUser._id !== listing.userRef && !contact && (
-              <button onClick={()=>setContact(true)} className="bg-slate-700 text-white w-full rounded-lg mt-5 uppercase hover:opacity-90 p-3">
+              <button
+                onClick={() => setContact(true)}
+                className="bg-slate-700 text-white w-full rounded-lg mt-5 uppercase hover:opacity-90 p-3"
+              >
                 contact landlord
               </button>
             )}
-            {contact && <Contact listing={listing}/>}
+            {contact && <Contact listing={listing} />}
+            {currentUser && currentUser._id === listing.userRef && (
+              <Link to={`/update-listing/${listing._id}`}>
+                <button className="bg-slate-700 text-white w-full rounded-lg mt-5 uppercase hover:opacity-90 p-3">
+                  Edit Listing
+                </button>
+              </Link>
+            )}
+            {!currentUser && (
+              <Link to={`/sign-in`}>
+                <button className="bg-slate-700 text-white w-full rounded-lg mt-5 uppercase hover:opacity-90 p-3">
+                  Sign in to cotact the landlord
+                </button>
+              </Link>
+            )}
+
           </div>
         </>
       )}
