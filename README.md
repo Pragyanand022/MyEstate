@@ -41,11 +41,6 @@ Welcome to **MyEstate**, a dynamic real estate platform built using the MERN sta
 
 ---
 
-## 📸 **Screenshots & Demo (Add GIF)**
-_Include animated GIF walkthrough of key functionalities, such as property listing, filtering, and login using OAuth._
-
----
-
 ## 🤝 **Contributing**
 
 Contributions are welcome! If you'd like to contribute to *MyEstate*, please follow these steps:
